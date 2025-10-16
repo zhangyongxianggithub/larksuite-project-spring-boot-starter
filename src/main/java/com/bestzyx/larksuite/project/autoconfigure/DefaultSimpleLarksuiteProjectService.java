@@ -535,7 +535,7 @@ public class DefaultSimpleLarksuiteProjectService
                                 .userKeys(Arrays.asList(userKeys)).build(),
                                 RequestOptions.newBuilder().userKey(userKey)
                                         .build());
-                if (!resp.success()) {
+                if (!resp.success() && resp.getErrCode() != 30006) {
                     final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to find users. "
                             + "request: userKeys={}, userKey={}"
@@ -557,7 +557,7 @@ public class DefaultSimpleLarksuiteProjectService
                 }
             } catch (final Exception e) {
                 log.warn(
-                        "Failed to find users. "
+                        "Failed to find users. retry it"
                                 + "request: userKeys={}, userKey={}",
                         Arrays.toString(userKeys), userKey);
                 retryTimes++;
