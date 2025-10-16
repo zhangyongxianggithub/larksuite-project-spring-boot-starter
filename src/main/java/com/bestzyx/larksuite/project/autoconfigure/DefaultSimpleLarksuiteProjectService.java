@@ -34,6 +34,7 @@ import com.lark.project.service.workitem.model.WorkItemInfo;
 import static com.bestzyx.prism.utils.StringUtils.isNotBlank;
 import static com.lark.project.core.utils.Jsons.DEFAULT;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 
@@ -553,7 +554,8 @@ public class DefaultSimpleLarksuiteProjectService
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), errorMsg));
                 } else {
-                    return resp.getData();
+                    return isNull(resp.getData()) ? emptyList()
+                            : resp.getData();
                 }
             } catch (final Exception e) {
                 log.warn(
