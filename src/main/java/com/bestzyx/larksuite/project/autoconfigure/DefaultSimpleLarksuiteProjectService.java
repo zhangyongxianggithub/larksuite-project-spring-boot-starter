@@ -54,8 +54,8 @@ public class DefaultSimpleLarksuiteProjectService
     
     private final int maxRetryTimes;
     
-    public DefaultSimpleLarksuiteProjectService(Client larksuiteProjectClient,
-            int maxRetryTimes) {
+    public DefaultSimpleLarksuiteProjectService(
+            final Client larksuiteProjectClient, final int maxRetryTimes) {
         this.larksuiteProjectClient = larksuiteProjectClient;
         this.maxRetryTimes = maxRetryTimes;
     }
@@ -68,7 +68,7 @@ public class DefaultSimpleLarksuiteProjectService
         int retryTimes = 0;
         RuntimeException exception;
         do {
-            String fieldValueMsg = DEFAULT.toJson(fieldValuePairs);
+            final String fieldValueMsg = DEFAULT.toJson(fieldValuePairs);
             try {
                 final CreateWorkItemResp resp = this.larksuiteProjectClient
                         .getWorkItemService().createWorkItem(
@@ -81,7 +81,7 @@ public class DefaultSimpleLarksuiteProjectService
                                         .build());
                 // 处理服务端错误
                 if (!resp.success()) {
-                    String errorMsg = DEFAULT.toJson(resp.getErr());
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to create work item. "
                             + "request: projectKey={}, workItemTypeKey={}, templateId={}, name={}, fieldValuePairs={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={}, detail err={}",
@@ -143,7 +143,7 @@ public class DefaultSimpleLarksuiteProjectService
                                         .build());
                 // 处理服务端错误
                 if (!resp.success()) {
-                    String error = DEFAULT.toJson(resp.getErr());
+                    final String error = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to change work item status. "
                             + "request: projectKey={}, workItemTypeKey={}, workItemId={}, transitionId={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={}, detail err={}",
@@ -162,7 +162,7 @@ public class DefaultSimpleLarksuiteProjectService
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), error));
                 } else {
-                    String respMsg = DEFAULT.toJson(resp);
+                    final String respMsg = DEFAULT.toJson(resp);
                     log.info(
                             "Successfully changed larksuite project work item status. "
                                     + "request: projectKey={}, workItemTypeKey={}, workItemId={}, transitionId={}, userKey={}"
@@ -203,7 +203,7 @@ public class DefaultSimpleLarksuiteProjectService
                                             .build());
                     if (!resp.success()) {
                         
-                        String errorMsg = DEFAULT.toJson(resp.getErr());
+                        final String errorMsg = DEFAULT.toJson(resp.getErr());
                         log.warn("Failed to query users. "
                                 + "request: projectKey={}, emails={}, userKey={}"
                                 + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
@@ -256,7 +256,7 @@ public class DefaultSimpleLarksuiteProjectService
                                 RequestOptions.newBuilder().userKey(userKey)
                                         .build());
                 if (!resp.success()) {
-                    String errorMsg = DEFAULT.toJson(resp.getErr());
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to search users. "
                             + "request: projectKey={}, keyword={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
@@ -351,7 +351,7 @@ public class DefaultSimpleLarksuiteProjectService
                     return resp.getData().isEmpty() ? Optional.empty()
                             : Optional.of(resp.getData().getFirst());
                 } else {
-                    String errorMsg = DEFAULT.toJson(resp.getErr());
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to find work item. "
                             + "request: projectKey={}, workItemTypeKey={}, workItemId={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={}, detail err={}",
@@ -385,8 +385,8 @@ public class DefaultSimpleLarksuiteProjectService
     @Override
     public FilterResp searchWorkItems(final String projectKey,
             final String userKey, final String workItemTypeKey,
-            final Collection<String> workItemStatus, String workItemName,
-            long pageNo, long pageSize) {
+            final Collection<String> workItemStatus, final String workItemName,
+            final long pageNo, final long pageSize) {
         if (pageNo < 1) {
             throw new IllegalArgumentException(
                     "pageNo must be greater than or equal to 1.");
@@ -399,7 +399,7 @@ public class DefaultSimpleLarksuiteProjectService
         RuntimeException exception;
         do {
             try {
-                FilterReq.Builder builder = FilterReq.newBuilder()
+                final FilterReq.Builder builder = FilterReq.newBuilder()
                         .projectKey(projectKey)
                         .workItemTypeKeys(List.of(workItemTypeKey))
                         .pageNum(pageNo).pageSize(pageSize);
@@ -423,7 +423,7 @@ public class DefaultSimpleLarksuiteProjectService
                             workItemStatus, userKey, resp.getData());
                     return resp;
                 } else {
-                    String errorMsg = DEFAULT.toJson(resp.getErr());
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to search work items. "
                             + "request: projectKey={}, workItemTypeKey={}, workItemStatus={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={}, detail err={}",
@@ -456,7 +456,8 @@ public class DefaultSimpleLarksuiteProjectService
     
     public SearchByParamsResp searchWorkItems(final String projectKey,
             final String userKey, final String workItemTypeKey,
-            List<SearchParam> searchParams, long pageNo, long pageSize) {
+            final List<SearchParam> searchParams, final long pageNo,
+            final long pageSize) {
         if (pageNo < 1) {
             throw new IllegalArgumentException(
                     "pageNo must be greater than or equal to 1.");
@@ -486,7 +487,7 @@ public class DefaultSimpleLarksuiteProjectService
                             searchParams, userKey, resp.getData());
                     return resp;
                 } else {
-                    String errorMsg = DEFAULT.toJson(resp.getErr());
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to search work items. "
                             + "request: projectKey={}, workItemTypeKey={}, searchParams={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={}, detail err={}",
@@ -513,6 +514,57 @@ public class DefaultSimpleLarksuiteProjectService
                                 + "request: projectKey={0}, workItemTypeKey={1}, searchParams={2}, userKey={3}",
                         projectKey, userKey, searchParams, userKey), e);
             }
+        } while (retryTimes < this.maxRetryTimes);
+        throw exception;
+    }
+    
+    @Override
+    public List<UserBasicInfo> findUsers(final String projectKey,
+            final String userKey, final String... userKeys) {
+        if (userKeys == null || userKeys.length == 0) {
+            return emptyList();
+        }
+        int retryTimes = 0;
+        RuntimeException exception;
+        do {
+            try {
+                final QueryUserDetailResp resp = this.larksuiteProjectClient
+                        .getUserService()
+                        .queryUserDetail(QueryUserDetailReq.newBuilder()
+                                .userKeys(Arrays.asList(userKeys)).build(),
+                                RequestOptions.newBuilder().userKey(userKey)
+                                        .build());
+                if (!resp.success()) {
+                    final String errorMsg = DEFAULT.toJson(resp.getErr());
+                    log.warn("Failed to find users. "
+                            + "request: projectKey={}, userKeys={}, userKey={}"
+                            + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
+                            projectKey, userKeys, userKey,
+                            resp.getRawResponse().getStatusCode(),
+                            resp.getErrCode(), resp.getErrMsg(),
+                            resp.getRequestId(), errorMsg);
+                    throw new IllegalStateException(MessageFormat.format(
+                            "Failed to find users. "
+                                    + "request: projectKey={0}, userKeys={1}, userKey={2}"
+                                    + ", response: http status={3}, code={4}, msg={5}, requestId={6},detail err={7}",
+                            projectKey, userKeys, userKey,
+                            resp.getRawResponse().getStatusCode(),
+                            resp.getErrCode(), resp.getErrMsg(),
+                            resp.getRequestId(), errorMsg));
+                } else {
+                    return resp.getData();
+                }
+            } catch (final Exception e) {
+                log.warn("Failed to find users. "
+                        + "request: projectKey={}, userKeys={}, userKey={}",
+                        projectKey, userKeys, userKey);
+                retryTimes++;
+                exception = new IllegalArgumentException(MessageFormat.format(
+                        "Failed to search users. "
+                                + "request: projectKey={0}, userKeys={1}, userKey={2}",
+                        projectKey, userKeys, userKey), e);
+            }
+            // 碰撞时间
         } while (retryTimes < this.maxRetryTimes);
         throw exception;
     }

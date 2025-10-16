@@ -35,6 +35,9 @@ public interface SimpleLarksuiteProjectService {
     Optional<UserBasicInfo> findUserByUsername(final String projectKey,
             String userKey, String username);
     
+    List<UserBasicInfo> findUsers(final String projectKey, String userKey,
+            String... userKeys);
+    
     List<UserBasicInfo> findUserByUsernames(final String projectKey,
             final String userKey, final String... usernames);
     
