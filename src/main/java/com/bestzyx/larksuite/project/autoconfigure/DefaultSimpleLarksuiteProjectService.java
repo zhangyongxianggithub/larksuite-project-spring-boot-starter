@@ -540,7 +540,7 @@ public class DefaultSimpleLarksuiteProjectService
                     log.warn("Failed to find users. "
                             + "request: userKeys={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
-                            userKeys, userKey,
+                            Arrays.toString(userKeys), userKey,
                             resp.getRawResponse().getStatusCode(),
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), errorMsg);
@@ -548,7 +548,7 @@ public class DefaultSimpleLarksuiteProjectService
                             "Failed to find users. "
                                     + "request: userKeys={0}, userKey={1}"
                                     + ", response: http status={2}, code={3}, msg={4}, requestId={5},detail err={6}",
-                            userKeys, userKey,
+                            Arrays.toString(userKeys), userKey,
                             resp.getRawResponse().getStatusCode(),
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), errorMsg));
@@ -559,12 +559,12 @@ public class DefaultSimpleLarksuiteProjectService
                 log.warn(
                         "Failed to find users. "
                                 + "request: userKeys={}, userKey={}",
-                        userKeys, userKey);
+                        Arrays.toString(userKeys), userKey);
                 retryTimes++;
                 exception = new IllegalArgumentException(MessageFormat.format(
                         "Failed to search users. "
                                 + "request: userKeys={0}, userKey={1}",
-                        userKeys, userKey), e);
+                        Arrays.toString(userKeys), userKey), e);
             }
             // 碰撞时间
         } while (retryTimes < this.maxRetryTimes);
