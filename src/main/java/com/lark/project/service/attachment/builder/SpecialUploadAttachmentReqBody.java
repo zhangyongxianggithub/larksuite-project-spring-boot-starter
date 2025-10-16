@@ -19,6 +19,7 @@ public class SpecialUploadAttachmentReqBody {
         this.file = file;
     }
 
+
     public String getMimeType() {
         return mimeType;
     }
