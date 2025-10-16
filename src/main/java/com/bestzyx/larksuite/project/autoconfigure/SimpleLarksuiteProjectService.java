@@ -23,20 +23,18 @@ public interface SimpleLarksuiteProjectService {
     void changeWorkItemStatus(String projectKey, String workItemTypeKey,
             long workItemId, long transitionId, String userKey);
     
-    List<UserBasicInfo> queryUsers(final String projectKey, String userKey,
-            String... emails);
+    List<UserBasicInfo> queryUsers(String userKey, String... emails);
     
-    List<UserBasicInfo> searchUsers(final String projectKey,
-            final String userKey, final String keyword);
+    List<UserBasicInfo> searchUsers(String projectKey, final String userKey,
+            final String keyword);
     
-    Optional<UserBasicInfo> findUserByEmail(final String projectKey,
-            String userKey, String email);
+    Optional<UserBasicInfo> findUserByEmail(String projectKey, String userKey,
+            String email);
     
-    Optional<UserBasicInfo> findUserByUsername(final String projectKey,
+    Optional<UserBasicInfo> findUserByUsername(String projectKey,
             String userKey, String username);
     
-    List<UserBasicInfo> findUsers(final String projectKey, String userKey,
-            String... userKeys);
+    List<UserBasicInfo> findUsers(String userKey, String... userKeys);
     
     List<UserBasicInfo> findUserByUsernames(final String projectKey,
             final String userKey, final String... usernames);

@@ -188,8 +188,8 @@ public class DefaultSimpleLarksuiteProjectService
     }
     
     @Override
-    public List<UserBasicInfo> queryUsers(final String projectKey,
-            final String userKey, final String... emails) {
+    public List<UserBasicInfo> queryUsers(final String userKey,
+            final String... emails) {
         if (nonNull(emails) && emails.length > 0) {
             int retryTimes = 0;
             RuntimeException exception;
@@ -205,9 +205,9 @@ public class DefaultSimpleLarksuiteProjectService
                         
                         final String errorMsg = DEFAULT.toJson(resp.getErr());
                         log.warn("Failed to query users. "
-                                + "request: projectKey={}, emails={}, userKey={}"
+                                + "request:  emails={}, userKey={}"
                                 + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
-                                projectKey, emails, userKey,
+                                emails, userKey,
                                 resp.getRawResponse().getStatusCode(),
                                 resp.getErrCode(), resp.getErrMsg(),
                                 resp.getRequestId(), errorMsg);
@@ -216,9 +216,9 @@ public class DefaultSimpleLarksuiteProjectService
                         }
                         throw new IllegalStateException(MessageFormat.format(
                                 "Failed to query users. "
-                                        + "request: projectKey={0}, emails={1}, userKey={2}"
-                                        + ", response: http status={3}, code={4}, msg={5}, requestId={6},detail err={7}",
-                                projectKey, emails, userKey,
+                                        + "request: emails={0}, userKey={1}"
+                                        + ", response: http status={2}, code={3}, msg={4}, requestId={5},detail err={6}",
+                                emails, userKey,
                                 resp.getRawResponse().getStatusCode(),
                                 resp.getErrCode(), resp.getErrMsg(),
                                 resp.getRequestId(), errorMsg));
@@ -226,14 +226,15 @@ public class DefaultSimpleLarksuiteProjectService
                         return resp.getData();
                     }
                 } catch (final Exception e) {
-                    log.warn("Failed to query users. "
-                            + "request: projectKey={}, emails={}, userKey={}",
-                            projectKey, emails, userKey);
+                    log.warn(
+                            "Failed to query users. "
+                                    + "request: emails={}, userKey={}",
+                            emails, userKey);
                     retryTimes++;
                     exception = new IllegalArgumentException(
                             MessageFormat.format("Failed to query users. "
-                                    + "request: projectKey={0}, emails={1}, userKey={2}",
-                                    projectKey, emails, userKey),
+                                    + "request: emails={0}, userKey={1}",
+                                    emails, userKey),
                             e);
                 }
             } while (retryTimes < this.maxRetryTimes);
@@ -519,8 +520,8 @@ public class DefaultSimpleLarksuiteProjectService
     }
     
     @Override
-    public List<UserBasicInfo> findUsers(final String projectKey,
-            final String userKey, final String... userKeys) {
+    public List<UserBasicInfo> findUsers(final String userKey,
+            final String... userKeys) {
         if (userKeys == null || userKeys.length == 0) {
             return emptyList();
         }
@@ -537,17 +538,17 @@ public class DefaultSimpleLarksuiteProjectService
                 if (!resp.success()) {
                     final String errorMsg = DEFAULT.toJson(resp.getErr());
                     log.warn("Failed to find users. "
-                            + "request: projectKey={}, userKeys={}, userKey={}"
+                            + "request: userKeys={}, userKey={}"
                             + ", response: http status={}, code={}, msg={}, requestId={},detail err={}",
-                            projectKey, userKeys, userKey,
+                            userKeys, userKey,
                             resp.getRawResponse().getStatusCode(),
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), errorMsg);
                     throw new IllegalStateException(MessageFormat.format(
                             "Failed to find users. "
-                                    + "request: projectKey={0}, userKeys={1}, userKey={2}"
-                                    + ", response: http status={3}, code={4}, msg={5}, requestId={6},detail err={7}",
-                            projectKey, userKeys, userKey,
+                                    + "request: userKeys={0}, userKey={1}"
+                                    + ", response: http status={2}, code={3}, msg={4}, requestId={5},detail err={6}",
+                            userKeys, userKey,
                             resp.getRawResponse().getStatusCode(),
                             resp.getErrCode(), resp.getErrMsg(),
                             resp.getRequestId(), errorMsg));
@@ -555,14 +556,15 @@ public class DefaultSimpleLarksuiteProjectService
                     return resp.getData();
                 }
             } catch (final Exception e) {
-                log.warn("Failed to find users. "
-                        + "request: projectKey={}, userKeys={}, userKey={}",
-                        projectKey, userKeys, userKey);
+                log.warn(
+                        "Failed to find users. "
+                                + "request: userKeys={}, userKey={}",
+                        userKeys, userKey);
                 retryTimes++;
                 exception = new IllegalArgumentException(MessageFormat.format(
                         "Failed to search users. "
-                                + "request: projectKey={0}, userKeys={1}, userKey={2}",
-                        projectKey, userKeys, userKey), e);
+                                + "request: userKeys={0}, userKey={1}",
+                        userKeys, userKey), e);
             }
             // 碰撞时间
         } while (retryTimes < this.maxRetryTimes);
